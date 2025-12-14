@@ -1,19 +1,27 @@
 {
-  "name": "my-app",
+  "name": "containerflow",
   "version": "1.0.0",
   "private": true,
-  "main": "client/index.js",
+  "main": "server_dist/index.js",
+  "type": "module",
+  "engines": {
+    "node": ">=18 <23"
+  },
   "scripts": {
-    "build": "npm run server:build",
-    "start": "npm run server:prod",
-    "expo:dev": "EXPO_PACKAGER_PROXY_URL=https://$EXPO_PUBLIC_DOMAIN REACT_NATIVE_PACKAGER_HOSTNAME=$EXPO_PUBLIC_DOMAIN EXPO_PUBLIC_DOMAIN=$EXPO_PUBLIC_API_URL:5000 npx expo start",
+    "//": "LOCAL DEV",
+    "mobile:dev": "npx expo start -c --lan",
+    "mobile:dev:tunnel": "npx expo start -c --tunnel",
     "server:dev": "NODE_ENV=development tsx server/index.ts",
-    "all:dev": "npm run expo:dev & npm run server:dev",
-    "expo:start:static:build": "EXPO_PUBLIC_DOMAIN=$EXPO_PUBLIC_API_URL npx expo start --no-dev --minify --localhost",
-    "expo:static:build": "node scripts/build.js",
-    "server:build": "npx esbuild server/index.ts  --platform=node --packages=external --bundle --format=esm --outdir=server_dist",
-    "server:prod": "NODE_ENV=production node server_dist/index.js",
+    "dev": "npm run server:dev",
+
+    "//_render": "RENDER DEPLOYMENT",
+    "server:build": "node esbuild.config.mjs",
+    "server:start": "NODE_ENV=production node server_dist/index.js",
+
+    "//__db": "DB",
     "db:push": "drizzle-kit push",
+
+    "//__quality": "QUALITY",
     "lint": "npx expo lint",
     "lint:fix": "npx expo lint --fix",
     "check:types": "tsc --noEmit",
@@ -31,7 +39,6 @@
     "babel-preset-expo": "^54.0.8",
     "drizzle-orm": "^0.39.3",
     "drizzle-zod": "^0.7.0",
-    "dotenv": "^16.4.7",
     "expo": "~54.0.29",
     "expo-blur": "~15.0.8",
     "expo-camera": "^17.0.10",
@@ -75,14 +82,15 @@
     "@types/node": "24.10.0",
     "@types/react": "~19.1.0",
     "babel-plugin-module-resolver": "^5.0.2",
-    "drizzle-kit": "^0.18.1",
-    "esbuild": "^0.25.12",
+    "drizzle-kit": "^0.31.4",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~10.0.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-node": "^0.3.9",
     "eslint-plugin-prettier": "^5.5.4",
     "prettier": "3.6.2",
-    "typescript": "~5.9.2"
+    "typescript": "~5.9.2",
+    "esbuild": "^0.24.2",
+    "dotenv": "^16.4.5"
   }
 }

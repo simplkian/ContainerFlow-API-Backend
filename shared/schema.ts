@@ -152,6 +152,7 @@ export const boxStatusEnum = pgEnum("box_status", [
 export const taskTypeEnum = pgEnum("task_type", [
   "DAILY_FULL",  // Auto-generated daily task for full stands
   "MANUAL",      // Manually created task
+  "AUTOMOTIVE",  // Automotive factory task
   "LEGACY",      // Legacy task (backward compatibility)
 ]);
 
@@ -635,9 +636,9 @@ export const tasks = pgTable("tasks", {
   // Automotive measurements
   weightKg: real("weight_kg"),
   weighedByUserId: varchar("weighed_by_user_id").references(() => users.id),
-  
+
   // Task categorization
-  taskType: text("task_type").notNull().default("LEGACY"), // DAILY_FULL, MANUAL, LEGACY
+  taskType: text("task_type").notNull().default("LEGACY"), // DAILY_FULL, MANUAL, AUTOMOTIVE, LEGACY
   source: text("source").notNull().default("LEGACY"), // SCHEDULED, MANUAL, ADHOC, LEGACY
   scheduleId: varchar("schedule_id").references(() => taskSchedules.id), // Link to the schedule that created this task
   
@@ -1088,5 +1089,6 @@ export const BOX_STATUS_LABELS: Record<string, string> = {
 export const TASK_TYPE_LABELS: Record<string, string> = {
   DAILY_FULL: "Tägliche Abholung",
   MANUAL: "Manueller Auftrag",
+  AUTOMOTIVE: "Automotive-Auftrag",
   LEGACY: "Legacy-Auftrag",
 };

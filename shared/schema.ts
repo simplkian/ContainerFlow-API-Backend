@@ -858,6 +858,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
   phone: true,
   role: true,
   departmentId: true,
+  isActive: true,
 });
 
 export const insertCustomerSchema = createInsertSchema(customers);

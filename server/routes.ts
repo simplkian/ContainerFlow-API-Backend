@@ -25,7 +25,7 @@ function hashPassword(password: string): string {
  * Note: In production, this should verify a session token
  * For now, we check x-user-id header or userId in body
  */
-async function requireAuth(req: Request, res: Response, next: NextFunction) {
+export async function requireAuth(req: Request, res: Response, next: NextFunction) {
   const userId = req.headers["x-user-id"] as string || req.body?.userId;
   
   if (!userId) {

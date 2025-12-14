@@ -4,7 +4,8 @@ import { storage } from "./storage";
 import { createHash } from "crypto";
 import { checkDatabaseHealth, db } from "./db";
 import { env } from "./config/env";
-import { 
+import { daysBetween, getDayOfWeekInTimezone, shouldGenerateForDate } from "./scheduler.js";
+import {
   materials, halls, stations, stands, boxes, taskEvents, tasks, warehouseContainers, users, departments, taskSchedules,
   scanEvents, activityLogs,
   assertAutomotiveTransition, getAutomotiveTimestampFieldForStatus,
@@ -347,57 +348,7 @@ function formatDateInTimezone(date: Date, timezone: string): string {
 /**
  * Get day of week (1=Monday, 7=Sunday) in specified timezone
  */
-function getDayOfWeekInTimezone(date: Date, timezone: string): number {
-  const dateStr = date.toLocaleString('en-US', { timeZone: timezone });
-  const localDate = new Date(dateStr);
-  const day = localDate.getDay();
-  return day === 0 ? 7 : day; // Convert Sunday from 0 to 7
-}
-
-/**
- * Calculate days between two dates (ignoring time)
- */
-function daysBetween(date1: Date, date2: Date): number {
-  const d1 = new Date(date1);
-  const d2 = new Date(date2);
-  d1.setHours(0, 0, 0, 0);
-  d2.setHours(0, 0, 0, 0);
-  const diffTime = d2.getTime() - d1.getTime();
-  return Math.floor(diffTime / (1000 * 60 * 60 * 24));
-}
-
-/**
- * Check if a task should be generated for a specific date based on schedule rule
- */
-function shouldGenerateForDate(
-  schedule: TaskSchedule,
-  targetDate: Date,
-  timezone: string
-): boolean {
-  const { ruleType, weekdays, everyNDays, startDate } = schedule;
-
-  switch (ruleType) {
-    case 'DAILY':
-      return true;
-
-    case 'WEEKLY':
-      if (!weekdays || !Array.isArray(weekdays) || weekdays.length === 0) {
-        return false;
-      }
-      const dayOfWeek = getDayOfWeekInTimezone(targetDate, timezone);
-      return weekdays.includes(dayOfWeek);
-
-    case 'INTERVAL':
-      if (!everyNDays || everyNDays < 1 || !startDate) {
-        return false;
-      }
-      const days = daysBetween(startDate, targetDate);
-      return days >= 0 && days % everyNDays === 0;
-
-    default:
-      return false;
-  }
-}
+export { shouldGenerateForDate };
 
 /**
  * Main flexible scheduler function
